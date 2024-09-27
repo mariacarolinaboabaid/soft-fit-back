@@ -8,9 +8,15 @@ const dataSourceOptions: DataSourceOptions = {
   username: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [__dirname + '/**/*.entity{.ts,.js}'],
+  entities: [__dirname + '/../../**/*.entity.{ts,js}'],
+  migrations: [__dirname + '/../migrations/*{.ts,.js}'],
+  synchronize: false,
+  logging: true,
 };
 
 const dataSource = new DataSource(dataSourceOptions);
 
 export default dataSource;
+
+// typeorm-ts-node-commonjs -d src/database/postgres-config/postgres-config.ts migration:generate src/database/migrations/CreateClientEntity
+// typeorm-ts-node-commonjs -d src/database/postgres-config/postgres-config.ts migration:run
