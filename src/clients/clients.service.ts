@@ -22,7 +22,6 @@ export class ClientsService {
         const clientDTO = new ReturnClientDTO(client.businessName,
             client.fiscalNumber,
             client.username,
-            client.password,
             client.role,
             client.currency
         );
