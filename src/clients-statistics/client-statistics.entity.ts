@@ -1,11 +1,15 @@
 /* eslint-disable prettier/prettier */
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Client } from '../clients/client.entity';
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity({ name: 'clients_statistics' })
 export class ClientStatistics {
 
- @PrimaryGeneratedColumn('uuid', { name: 'id' })
+  @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
+
+  @OneToOne(() => Client, client => client.statistics)
+  client: Client;
 
   @Column({ name: "total_customers", type: "int" })
   totalCustomers: number;

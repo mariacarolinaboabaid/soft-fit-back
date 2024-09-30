@@ -8,6 +8,7 @@ export class ReturnClientDTO {
         readonly fiscalNumber: string,
         readonly username: string,
         readonly role: Role,
-        readonly currency: Currency
+        readonly currency: Currency,
+        readonly statisticsId: string
     ){}
 }

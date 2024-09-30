@@ -1,4 +1,4 @@
-export class ReturnDTO {
+export class ReturnClientStatisticsDTO {
   constructor(
     readonly totalCustomers: number,
     readonly totalDeliquentCustomers: number,

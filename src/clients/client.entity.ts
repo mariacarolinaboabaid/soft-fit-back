@@ -1,18 +1,19 @@
 /* eslint-disable prettier/prettier */
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Currency } from './enums/currency.enum';
 import { Role } from '../shared/enums/role.enum';
+import { ClientStatistics } from '../clients-statistics/client-statistics.entity';
 
 @Entity({ name: 'clients' })
 export class Client {
 
- @PrimaryGeneratedColumn('uuid', { name: 'id' })
+  @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
-  @Column({ name: "businessName", type: "varchar", unique: true })
+  @Column({ name: "business_name", type: "varchar", unique: true })
   businessName: string;
 
-  @Column({ name: "fiscalNumber", type: "varchar", unique: true })
+  @Column({ name: "fiscal_number", type: "varchar", unique: true })
   fiscalNumber: string;
 
   @Column({ name: "username", type: "varchar", unique: true })
@@ -26,4 +27,9 @@ export class Client {
 
   @Column({ name: "currency", enum: Currency, nullable: false })
   currency: Currency;
+
+  @OneToOne(() => ClientStatistics, statistics => statistics.client,
+  {cascade: true, onDelete: 'CASCADE'})
+  @JoinColumn({name: "statistics_id"})
+  statistics: ClientStatistics;
 }
