@@ -8,10 +8,10 @@ import {
   Put,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
-import { CreateClientDTO } from './dtos/create-client.dto';
+import { CreateClientDTO } from './dtos/create.dto';
 import { Client } from './client.entity';
 import { v4 as uuid } from 'uuid';
-import { UpdateClientDTO } from './dtos/update-client.dto';
+import { UpdateClientDTO } from './dtos/update.dto';
 import { PasswordHashPipe } from 'src/shared/pipes/password-hash/password-hash.pipe';
 
 @Controller('clients')
