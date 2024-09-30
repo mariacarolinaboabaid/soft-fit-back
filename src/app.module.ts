@@ -6,6 +6,7 @@ import { ClientsModule } from './clients/clients.module';
 import dataSource from './database/postgres-config/postgres-config';
 import { DatabaseService } from './database/services/database.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ClientsStatisticsModule } from './clients-statistics/clients-statistics.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       inject: [DatabaseService],
     }),
     ClientsModule,
+    ClientsStatisticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
