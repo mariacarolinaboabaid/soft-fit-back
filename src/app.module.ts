@@ -9,6 +9,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsStatisticsModule } from './clients-statistics/clients-statistics.module';
 import { CustomersModule } from './customers/customers.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
+import { InstructorsModule } from './instructors/instructors.module';
+import { InstructorsWorkDetailsModule } from './instructors-work-details/instructors-work-details.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { EnrollmentsModule } from './enrollments/enrollments.module';
     ClientsStatisticsModule,
     CustomersModule,
     EnrollmentsModule,
+    InstructorsModule,
+    InstructorsWorkDetailsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

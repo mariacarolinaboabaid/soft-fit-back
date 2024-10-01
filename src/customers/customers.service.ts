@@ -82,7 +82,6 @@ export class CustomersService {
     return count;
   }
 
-
   async getAllCountActiveCustomersByClientId(clientId: string) {
     const count = await this.customersRepository.count({
       where: {
@@ -152,10 +151,6 @@ export class CustomersService {
 
   private async getClientInformation(clientId: string){
     return await this.clientsService.getByIdWithAllInformation(clientId);
-  }
-
-  private async getEnrollmentInformation(enrollmentId: string){
-    return await this.enrollmentsService.getById(enrollmentId);
   }
 
   async createPayment(id: string, createPaymentDTO: CreatePaymentDTO) {
