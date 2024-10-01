@@ -1,35 +1,45 @@
 /* eslint-disable prettier/prettier */
-import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Currency } from './enums/currency.enum';
-import { Role } from '../shared/enums/role.enum';
 import { ClientStatistics } from '../clients-statistics/client-statistics.entity';
+import { Enrollment } from '../enrollments/enrollment.entity';
+import { Customer } from '../customers/customer.entity';
 
 @Entity({ name: 'clients' })
 export class Client {
-
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
-  @Column({ name: "business_name", type: "varchar", unique: true })
+  @Column({ name: 'business_name', type: 'varchar', unique: true })
   businessName: string;
 
-  @Column({ name: "fiscal_number", type: "varchar", unique: true })
+  @Column({ name: 'fiscal_number', type: 'varchar', unique: true })
   fiscalNumber: string;
 
-  @Column({ name: "username", type: "varchar", unique: true })
+  @Column({ name: 'username', type: 'varchar', unique: true })
   username: string;
 
-  @Column({ name: "password", type: "varchar" })
+  @Column({ name: 'password', type: 'varchar' })
   password: string;
 
-  @Column({ name: "role", enum: Role, nullable: false })
-  role: Role;
-
-  @Column({ name: "currency", enum: Currency, nullable: false })
+  @Column({ name: 'currency', enum: Currency, nullable: false })
   currency: Currency;
 
-  @OneToOne(() => ClientStatistics, statistics => statistics.client,
-  {cascade: true, onDelete: 'CASCADE'})
-  @JoinColumn({name: "statistics_id"})
+  @OneToOne(() => ClientStatistics, (statistics) => statistics.client,
+  { cascade: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'statistics_id' })
   statistics: ClientStatistics;
+
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.client)
+  enrollments: Enrollment[];
+
+  @OneToMany(() => Customer, (customer) => customer.enrollment)
+  customers: Customer[];
 }
