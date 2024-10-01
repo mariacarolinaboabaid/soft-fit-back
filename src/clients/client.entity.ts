@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import {
   Column,
   Entity,
@@ -11,6 +10,7 @@ import { Currency } from './enums/currency.enum';
 import { ClientStatistics } from '../clients-statistics/client-statistics.entity';
 import { Enrollment } from '../enrollments/enrollment.entity';
 import { Customer } from '../customers/customer.entity';
+import { Instructor } from '../instructors/instructor.entity';
 
 @Entity({ name: 'clients' })
 export class Client {
@@ -32,14 +32,19 @@ export class Client {
   @Column({ name: 'currency', enum: Currency, nullable: false })
   currency: Currency;
 
-  @OneToOne(() => ClientStatistics, (statistics) => statistics.client,
-  { cascade: true, onDelete: 'CASCADE' })
+  @OneToOne(() => ClientStatistics, (statistics) => statistics.client, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'statistics_id' })
   statistics: ClientStatistics;
 
   @OneToMany(() => Enrollment, (enrollment) => enrollment.client)
   enrollments: Enrollment[];
 
-  @OneToMany(() => Customer, (customer) => customer.enrollment)
+  @OneToMany(() => Instructor, (instructor) => instructor.client)
+  instructors: Instructor[];
+
+  @OneToMany(() => Customer, (customer) => customer.client)
   customers: Customer[];
 }
