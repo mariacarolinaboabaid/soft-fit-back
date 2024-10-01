@@ -18,5 +18,5 @@ const dataSource = new DataSource(dataSourceOptions);
 
 export default dataSource;
 
-// typeorm-ts-node-commonjs -d src/database/postgres-config/postgres-config.ts migration:generate src/database/migrations/CreateClientEntity
+// typeorm-ts-node-commonjs -d src/database/postgres-config/postgres-config.ts migration:generate src/database/migrations/CreateCustomerAndEnrollmentEntity
 // typeorm-ts-node-commonjs -d src/database/postgres-config/postgres-config.ts migration:run

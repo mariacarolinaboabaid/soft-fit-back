@@ -13,8 +13,8 @@ export class CreateClientStatisticsDTO {
     this.totalBasicEnrollments = 0;
   }
 
-  @IsNotEmpty({ message: 'ClientId must have a value.' })
-  @IsString({ message: 'ClientId must be a string.' })
+  @IsNotEmpty({ message: 'Client id must have a value.' })
+  @IsString({ message: 'Client id must be a string.' })
   clientId: string;
 
   @IsNotEmpty({ message: 'Total customers must have a value.' })

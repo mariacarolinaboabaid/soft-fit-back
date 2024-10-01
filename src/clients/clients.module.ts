@@ -9,6 +9,7 @@ import { SharedModule } from 'src/shared/shared.module';
 import { Repository } from 'typeorm/repository/Repository';
 import { ClientsStatisticsModule } from 'src/clients-statistics/clients-statistics.module';
 import { ClientsStatisticsService } from 'src/clients-statistics/clients-statistics.service';
+import { HashPasswordService } from 'src/shared/services/hash-password/hash-password.service';
 
 @Module({
   imports: [
@@ -20,12 +21,14 @@ import { ClientsStatisticsService } from 'src/clients-statistics/clients-statist
   providers: [
     ClientsService,
     IsUsernameUniqueValidator,
+    HashPasswordService,
     {
       provide: 'CLIENTS_SERVICE',
       useFactory: (
         clientsRepository: Repository<Client>,
         clientsStatisticsService: ClientsStatisticsService,
-      ) => new ClientsService(clientsRepository, clientsStatisticsService),
+        hashPasswordService: HashPasswordService
+      ) => new ClientsService(clientsRepository, clientsStatisticsService, hashPasswordService),
         
       inject: [getRepositoryToken(Client), ClientsStatisticsService],
     },

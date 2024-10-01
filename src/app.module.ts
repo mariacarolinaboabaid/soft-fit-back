@@ -7,6 +7,8 @@ import dataSource from './database/postgres-config/postgres-config';
 import { DatabaseService } from './database/services/database.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsStatisticsModule } from './clients-statistics/clients-statistics.module';
+import { CustomersModule } from './customers/customers.module';
+import { EnrollmentsModule } from './enrollments/enrollments.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { ClientsStatisticsModule } from './clients-statistics/clients-statistics
     }),
     ClientsModule,
     ClientsStatisticsModule,
+    CustomersModule,
+    EnrollmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

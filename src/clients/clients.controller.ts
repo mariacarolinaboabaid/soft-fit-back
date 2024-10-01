@@ -9,10 +9,7 @@ import {
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDTO } from './dtos/create.dto';
-import { Client } from './client.entity';
-import { v4 as uuid } from 'uuid';
 import { UpdateClientDTO } from './dtos/update.dto';
-import { PasswordHashPipe } from 'src/shared/pipes/password-hash/password-hash.pipe';
 
 @Controller('clients')
 export class ClientsController {
@@ -26,17 +23,10 @@ export class ClientsController {
 
   @Post()
   async create(@Body() createClientDTO: CreateClientDTO) {
-    const client = new Client();
-    client.id = uuid();
-    Object.assign(client, createClientDTO);
-    const passwordHashPipe = new PasswordHashPipe();
-    client.password = await passwordHashPipe.transform(
-      createClientDTO.password,
-    );
-    await this.clientsService.create(client);
+    const response = await this.clientsService.create(createClientDTO);
     return {
       message: 'Client successfully created.',
-      clientId: client.id,
+      clientId: response,
     };
   }
 
