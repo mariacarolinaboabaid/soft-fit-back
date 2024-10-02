@@ -1,14 +1,24 @@
-import { Instructor } from 'src/instructors/instructor.entity';
+import { Instructor } from '../instructors/instructor.entity';
 import { Payment } from './interfaces/payment.interface';
 import { SalaryHistory } from './interfaces/salary-history.interface';
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity({ name: 'instructors_work_details' })
 export class InstructorWorkDetails {
   @PrimaryGeneratedColumn('uuid', { name: 'id' })
   id: string;
 
-  @OneToOne(() => Instructor, (instructor) => instructor.workDetails)
+  @OneToOne(() => Instructor, (instructor) => instructor.workDetails, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'instructor_id' })
   instructor: Instructor;
 
   @Column({ name: 'hire_date', type: 'date' })
@@ -26,7 +36,7 @@ export class InstructorWorkDetails {
   @Column({ name: 'account_payment', type: 'varchar' })
   accountPayment: string;
 
-  @Column({ name: 'salary', type: 'float' })
+  @Column({ name: 'work_hours', type: 'float' })
   workHours: number;
 
   @Column({ name: 'hour_start_time', type: 'int' })

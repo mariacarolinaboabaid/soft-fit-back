@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { v4 as uuid } from 'uuid';
 import { Instructor } from './instructor.entity';
-import { Repository } from 'typeorm';
+import { CreateInstructorDTO } from './dtos/create.dto';
+import { UpdateInstructorDTO } from './dtos/update.dto';
 import { HashPasswordService } from 'src/shared/services/hash-password/hash-password.service';
 import { ClientsService } from 'src/clients/clients.service';
-import { CreateInstructorDTO } from './dtos/create.dto';
+import { InstructorsWorkDetailsService } from 'src/instructors-work-details/instructors-work-details.service';
 
 @Injectable()
 export class InstructorsService {
@@ -13,6 +15,7 @@ export class InstructorsService {
     @InjectRepository(Instructor)
     private readonly instructorsRepository: Repository<Instructor>,
     private readonly clientsService: ClientsService,
+    private readonly instructorsWorkDetailsService: InstructorsWorkDetailsService,
     private readonly hashPasswordService: HashPasswordService,
   ) {}
 
@@ -47,23 +50,27 @@ export class InstructorsService {
   async getByUsername(username: string) {
     const instructor = await this.instructorsRepository.findOne({
       where: { username: username },
-      relations: ['client', 'workDetails'],
     });
     return instructor;
   }
 
   async create(createInstructorDTO: CreateInstructorDTO) {
+    const { createWorkDetailsDTO, ...onlyInstructorDTO } = createInstructorDTO;
     const instructor = new Instructor();
-    Object.assign(instructor, createInstructorDTO);
+    Object.assign(instructor, onlyInstructorDTO);
     instructor.id = uuid();
     instructor.active = true;
     instructor.client = await this.getClientInformation(
-      createInstructorDTO.clientId,
+      onlyInstructorDTO.clientId,
     );
     instructor.password = await this.hashPasswordService.hashPassword(
-      createInstructorDTO.password,
+      onlyInstructorDTO.password,
     );
     await this.instructorsRepository.save(instructor);
+    await this.instructorsWorkDetailsService.create(
+      createWorkDetailsDTO,
+      instructor,
+    );
     return instructor.id;
   }
 
@@ -71,7 +78,25 @@ export class InstructorsService {
     return await this.clientsService.getByIdWithAllInformation(clientId);
   }
 
+  async update(id: string, updateInstructorDTO: UpdateInstructorDTO) {
+    const { updateWorkDetailsDTO, ...onlyInstructorDTO } = updateInstructorDTO;
+    const instructor = await this.getById(id);
+    const workDetailsId = instructor.workDetails.id;
+    if (instructor) {
+      await this.instructorsRepository.update(id, onlyInstructorDTO);
+      await this.instructorsWorkDetailsService.update(
+        workDetailsId,
+        updateWorkDetailsDTO,
+      );
+    }
+  }
+
   async delete(id: string) {
-    await this.instructorsRepository.delete(id);
+    const instructor = await this.getById(id);
+    const workDetailsId = instructor.workDetails.id;
+    if (instructor) {
+      await this.instructorsRepository.delete(id);
+      await this.instructorsWorkDetailsService.delete(workDetailsId);
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Client } from 'src/clients/client.entity';
+import { Client } from '../clients/client.entity';
 import { InstructorWorkDetails } from '../instructors-work-details/instructor-work-details.entity';
 import {
   Column,
@@ -47,9 +47,7 @@ export class Instructor {
   @OneToOne(
     () => InstructorWorkDetails,
     (workDetails) => workDetails.instructor,
-    { cascade: true, onDelete: 'CASCADE' },
   )
-  @JoinColumn({ name: 'work_details_id' })
   workDetails: InstructorWorkDetails;
 
   @Column({ name: 'active', type: 'boolean' })

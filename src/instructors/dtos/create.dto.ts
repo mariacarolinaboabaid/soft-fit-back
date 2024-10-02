@@ -1,6 +1,13 @@
 import { Type } from 'class-transformer';
-import { IsDate, IsEmail, IsNotEmpty, IsString } from 'class-validator';
+import { CreateInstructorWorkDetailsDTO } from 'src/instructors-work-details/dtos/create.dto';
 import { IsUsernameUnique } from 'src/shared/validators/is-username-unique/is-username-unique';
+import {
+  IsDate,
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
 
 export class CreateInstructorDTO {
   @IsString({ message: 'Client id must be a string.' })
@@ -36,7 +43,7 @@ export class CreateInstructorDTO {
   @IsNotEmpty({ message: 'Phone must have a value.' })
   phone: string;
 
-  @IsString({ message: 'Work details id must be a string.' })
-  @IsNotEmpty({ message: 'Work details id must have a value.' })
-  workDetailsId: string;
+  @ValidateNested()
+  @Type(() => CreateInstructorWorkDetailsDTO)
+  createWorkDetailsDTO: CreateInstructorWorkDetailsDTO;
 }

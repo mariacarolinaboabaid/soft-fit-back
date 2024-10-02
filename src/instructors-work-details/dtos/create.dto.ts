@@ -2,10 +2,6 @@ import { Type } from 'class-transformer';
 import { IsString, IsNotEmpty, IsDate, IsNumber } from 'class-validator';
 
 export class CreateInstructorWorkDetailsDTO {
-  @IsString({ message: 'Instructor id must be a string.' })
-  @IsNotEmpty({ message: 'Instructor id must have a value.' })
-  instructorId: string;
-
   @Type(() => Date)
   @IsDate({ message: 'Hire date must be a valid date.' })
   @IsNotEmpty({ message: 'Hire date must have a value.' })
