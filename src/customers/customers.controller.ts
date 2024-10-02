@@ -27,12 +27,6 @@ export class CustomersController {
     return customer;
   }
 
-  @Get('/customer-by-username/:username')
-  async getByUsername(@Param('username') username: string) {
-    const customer = await this.customersService.getByUsername(username);
-    return customer;
-  }
-
   @Get('/customers-by-client-id/:clientId')
   async getAllByClientId(@Param('clientId') clientId: string) {
     const customers = await this.customersService.getAllByClientId(clientId);
@@ -48,10 +42,10 @@ export class CustomersController {
 
   @Post()
   async create(@Body() createCustomerDTO: CreateCustomerDTO) {
-    const response = await this.customersService.create(createCustomerDTO);
+    const customerId = await this.customersService.create(createCustomerDTO);
     return {
       message: 'Customer successfully created.',
-      customerId: response,
+      customerId: customerId,
     };
   }
 
