@@ -1,5 +1,6 @@
 import { Client } from '../clients/client.entity';
 import { Enrollment } from '../enrollments/enrollment.entity';
+import { Payment } from '../shared/interfaces/payments/payment.interface';
 import {
   Column,
   CreateDateColumn,
@@ -9,7 +10,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Payment } from './interfaces/payment.interface';
 
 @Entity({ name: 'customers' })
 export class Customer {

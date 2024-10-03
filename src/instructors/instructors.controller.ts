@@ -9,8 +9,11 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import { VerifyUserTokenGuard } from 'src/authentication/guards/verify-user-token/verify-user-token.guard';
 
+@UseGuards(VerifyUserTokenGuard)
 @Controller('instructors')
 export class InstructorsController {
   constructor(private readonly instructorsService: InstructorsService) {}

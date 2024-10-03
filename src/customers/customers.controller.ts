@@ -6,11 +6,14 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { CustomersService } from './customers.service';
-import { CreateCustomerDTO } from './dtos/create-customer.dto';
-import { UpdateCustomerDTO } from './dtos/update-customer.dto';
+import { CreateCustomerDTO } from './dtos/create.dto';
+import { UpdateCustomerDTO } from './dtos/update.dto';
+import { VerifyUserTokenGuard } from 'src/authentication/guards/verify-user-token/verify-user-token.guard';
 
+@UseGuards(VerifyUserTokenGuard)
 @Controller('customers')
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}

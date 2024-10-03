@@ -27,20 +27,21 @@ import { EnrollmentsService } from 'src/enrollments/enrollments.service';
     {
       provide: 'CUSTOMERS_SERVICE',
       useFactory: (
-        customersRepository: Repository<Customer>,
+        repository: Repository<Customer>,
         hashPasswordService: HashPasswordService,
         clientsService: ClientsService,
         enrollmentsService: EnrollmentsService,
       ) =>
         new CustomersService(
-          customersRepository,
-          hashPasswordService,
+          repository,
           clientsService,
           enrollmentsService,
+          hashPasswordService,
         ),
 
       inject: [getRepositoryToken(Customer)],
     },
   ],
+  exports: [CustomersService],
 })
 export class CustomersModule {}

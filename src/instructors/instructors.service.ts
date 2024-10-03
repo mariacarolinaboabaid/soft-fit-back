@@ -13,21 +13,21 @@ import { InstructorsWorkDetailsService } from 'src/instructors-work-details/inst
 export class InstructorsService {
   constructor(
     @InjectRepository(Instructor)
-    private readonly instructorsRepository: Repository<Instructor>,
+    private readonly repository: Repository<Instructor>,
     private readonly clientsService: ClientsService,
     private readonly instructorsWorkDetailsService: InstructorsWorkDetailsService,
     private readonly hashPasswordService: HashPasswordService,
   ) {}
 
   async getAll() {
-    const instructors = await this.instructorsRepository.find({
+    const instructors = await this.repository.find({
       relations: ['client', 'workDetails'],
     });
     return instructors;
   }
 
   async getById(id: string) {
-    const instructor = await this.instructorsRepository.findOne({
+    const instructor = await this.repository.findOne({
       where: { id: id },
       relations: ['client', 'workDetails'],
     });
@@ -40,7 +40,7 @@ export class InstructorsService {
   }
 
   async getByClientId(clientId: string) {
-    const instructors = await this.instructorsRepository.find({
+    const instructors = await this.repository.find({
       where: { client: { id: clientId } },
       relations: ['client', 'workDetails'],
     });
@@ -48,7 +48,7 @@ export class InstructorsService {
   }
 
   async getByUsername(username: string) {
-    const instructor = await this.instructorsRepository.findOne({
+    const instructor = await this.repository.findOne({
       where: { username: username },
     });
     return instructor;
@@ -66,7 +66,7 @@ export class InstructorsService {
     instructor.password = await this.hashPasswordService.hashPassword(
       onlyInstructorDTO.password,
     );
-    await this.instructorsRepository.save(instructor);
+    await this.repository.save(instructor);
     await this.instructorsWorkDetailsService.create(
       createWorkDetailsDTO,
       instructor,
@@ -83,7 +83,7 @@ export class InstructorsService {
     const instructor = await this.getById(id);
     const workDetailsId = instructor.workDetails.id;
     if (instructor) {
-      await this.instructorsRepository.update(id, onlyInstructorDTO);
+      await this.repository.update(id, onlyInstructorDTO);
       await this.instructorsWorkDetailsService.update(
         workDetailsId,
         updateWorkDetailsDTO,
@@ -95,7 +95,7 @@ export class InstructorsService {
     const instructor = await this.getById(id);
     const workDetailsId = instructor.workDetails.id;
     if (instructor) {
-      await this.instructorsRepository.delete(id);
+      await this.repository.delete(id);
       await this.instructorsWorkDetailsService.delete(workDetailsId);
     }
   }

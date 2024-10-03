@@ -25,10 +25,10 @@ import { HashPasswordService } from 'src/shared/services/hash-password/hash-pass
     {
       provide: 'CLIENTS_SERVICE',
       useFactory: (
-        clientsRepository: Repository<Client>,
+        repository: Repository<Client>,
         clientsStatisticsService: ClientsStatisticsService,
         hashPasswordService: HashPasswordService
-      ) => new ClientsService(clientsRepository, clientsStatisticsService, hashPasswordService),
+      ) => new ClientsService(repository, clientsStatisticsService, hashPasswordService),
         
       inject: [getRepositoryToken(Client), ClientsStatisticsService],
     },

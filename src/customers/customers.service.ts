@@ -4,12 +4,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm/repository/Repository';
 import { v4 as uuid } from 'uuid';
 import { Customer } from './customer.entity';
-import { CreateCustomerDTO } from './dtos/create-customer.dto';
-import { ReturnCustomerAuthDTO } from './dtos/return-customer-auth.dto';
+import { CreateCustomerDTO } from './dtos/create.dto';
+import { ReturnCustomerDTO } from './dtos/return.dto';
 import { HashPasswordService } from 'src/shared/services/hash-password/hash-password.service';
-import { UpdateCustomerDTO } from './dtos/update-customer.dto';
-import { CreatePaymentDTO } from './dtos/create-payment.dto';
-import { Payment } from './interfaces/payment.interface';
+import { UpdateCustomerDTO } from './dtos/update.dto';
+import { CreatePaymentDTO } from '../shared/dtos/payments/create-payment.dto';
+import { Payment } from '../shared/interfaces/payments/payment.interface';
 import { ClientsService } from 'src/clients/clients.service';
 import { EnrollmentsService } from 'src/enrollments/enrollments.service';
 
@@ -18,19 +18,17 @@ import { EnrollmentsService } from 'src/enrollments/enrollments.service';
 export class CustomersService {
   constructor(
     @InjectRepository(Customer)
-    private readonly customersRepository: Repository<Customer>,
-    private readonly hashPasswordService: HashPasswordService,
+    private readonly repository: Repository<Customer>,
     private readonly clientsService: ClientsService,
-    private readonly enrollmentsService: EnrollmentsService
+    private readonly enrollmentsService: EnrollmentsService,
+    private readonly hashPasswordService: HashPasswordService,
   ) { }
 
   async getAll() {
-    const customers = await this.customersRepository.find({
-      relations: ['client'],
-    });
+    const customers = await this.repository.find({ relations: ['client'], });
     const customersAuthDTO = customers.map(
       (customer) =>
-        new ReturnCustomerAuthDTO(
+        new ReturnCustomerDTO(
           customer.id,
           customer.client.id,
           customer.firstName,
@@ -43,11 +41,11 @@ export class CustomersService {
   }
 
   async getById(id: string) {
-    const customer = await this.customersRepository.findOne({
+    const customer = await this.repository.findOne({
       where: { id: id },
       relations: ['client', 'enrollment'],
     });
-    if (customer === null) {
+    if (!customer) {
       throw new NotFoundException(
         'Not found any customer registered by this id.',
       );
@@ -56,18 +54,18 @@ export class CustomersService {
   }
 
   async getByUsername(username: string) {
-    const customer = await this.customersRepository.findOne({
+    const customer = await this.repository.findOne({
       where: { username: username },
     });
     return customer;
   }
 
   async getAllByClientId(clientId: string) {
-    const customers = await this.customersRepository.find({
+    const customers = await this.repository.find({
       where: { client: { id: clientId } },
       relations: ['client', 'enrollment'],
     });
-    if (customers === null) {
+    if (!customers) {
       throw new NotFoundException(
         'Not found any customers registered by this client id.',
       );
@@ -75,15 +73,15 @@ export class CustomersService {
     return customers;
   }
 
-  async getAllCountCustomersByClientId(clientId: string) {
-    const count = await this.customersRepository.count({
+  async getCountTotalCustomersByClientId(clientId: string) {
+    const count = await this.repository.count({
       where: { client: { id: clientId } },
     });
     return count;
   }
 
-  async getAllCountActiveCustomersByClientId(clientId: string) {
-    const count = await this.customersRepository.count({
+  async getCountActiveCustomersByClientId(clientId: string) {
+    const count = await this.repository.count({
       where: {
         client: { id: clientId },
         active: true,
@@ -93,7 +91,7 @@ export class CustomersService {
   }
 
   async getCountInactiveCustomersByClientId(clientId: string) {
-    const count = await this.customersRepository.count({
+    const count = await this.repository.count({
       where: {
         client: { id: clientId },
         active: false,
@@ -106,7 +104,7 @@ export class CustomersService {
     clientId: string,
     enrollmentId: string,
   ) {
-    const count = await this.customersRepository.count({
+    const count = await this.repository.count({
       where: {
         client: { id: clientId },
         enrollment: { id: enrollmentId },
@@ -116,7 +114,7 @@ export class CustomersService {
   }
 
   async getCountCustomersDeliquentsByClientId(clientId: string) {
-    const count = await this.customersRepository.count({
+    const count = await this.repository.count({
       where: {
         client: { id: clientId },
         deliquent: true,
@@ -126,7 +124,7 @@ export class CustomersService {
   }
 
   async getDeliquentsCustomersByClientId(clientId: string) {
-    const customers = await this.customersRepository.find({
+    const customers = await this.repository.find({
       where: {
         client: { id: clientId },
         deliquent: true,
@@ -145,11 +143,11 @@ export class CustomersService {
     customer.client = await this.getClientInformation(createCustomerDTO.clientId);
     customer.enrollment = await this.enrollmentsService.getById(createCustomerDTO.enrollmentId);
     customer.password = await this.hashPasswordService.hashPassword(createCustomerDTO.password,);
-    await this.customersRepository.save(customer);
+    await this.repository.save(customer);
     return customer.id;
   }
 
-  private async getClientInformation(clientId: string){
+  private async getClientInformation(clientId: string) {
     return await this.clientsService.getByIdWithAllInformation(clientId);
   }
 
@@ -161,14 +159,14 @@ export class CustomersService {
       payment.paid = false;
       customer.payments.push(payment);
       Object.assign(payment, createPaymentDTO);
-      await this.customersRepository.save(customer);
+      await this.repository.save(customer);
     }
   }
 
   async update(id: string, updateCustomerDTO: UpdateCustomerDTO) {
     const customer = await this.getById(id);
     if (customer) {
-      await this.customersRepository.update(id, updateCustomerDTO);
+      await this.repository.update(id, updateCustomerDTO);
     }
   }
 
@@ -178,14 +176,14 @@ export class CustomersService {
       const payments = customer.payments;
       const selectedPayment = payments.find(payment => payment.id === paymentId);
       selectedPayment.paid = !selectedPayment.paid;
-      await this.customersRepository.save(customer);
+      await this.repository.save(customer);
     }
   }
 
   async delete(id: string) {
     const customer = await this.getById(id);
     if (customer) {
-      await this.customersRepository.delete(id);
+      await this.repository.delete(id);
     }
   }
 }
