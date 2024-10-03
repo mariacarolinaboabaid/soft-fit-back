@@ -1,5 +1,5 @@
 import { Instructor } from '../instructors/instructor.entity';
-import { Payment } from './interfaces/payment.interface';
+import { Payment } from '../shared/interfaces/payments/payment.interface';
 import { SalaryHistory } from './interfaces/salary-history.interface';
 import {
   Column,

@@ -1,4 +1,4 @@
-export class ReturnCustomerAuthDTO {
+export class ReturnCustomerDTO {
   constructor(
     readonly id: string,
     readonly clientId: string,

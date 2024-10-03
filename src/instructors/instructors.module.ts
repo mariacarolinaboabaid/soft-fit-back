@@ -27,13 +27,13 @@ import { InstructorsWorkDetailsService } from 'src/instructors-work-details/inst
     {
       provide: 'INSTRUCTORS_SERVICE',
       useFactory: (
-        instructorsRepository: Repository<Instructor>,
+        repository: Repository<Instructor>,
         clientsService: ClientsService,
         instructorsWorkDetailsService: InstructorsWorkDetailsService,
         hashPasswordService: HashPasswordService,
       ) =>
         new InstructorsService(
-          instructorsRepository,
+          repository,
           clientsService,
           instructorsWorkDetailsService,
           hashPasswordService,
@@ -42,5 +42,6 @@ import { InstructorsWorkDetailsService } from 'src/instructors-work-details/inst
       inject: [getRepositoryToken(Instructor)],
     },
   ],
+  exports: [InstructorsService],
 })
 export class InstructorsModule {}

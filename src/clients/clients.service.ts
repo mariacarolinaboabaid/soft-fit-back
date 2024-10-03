@@ -15,17 +15,17 @@ import { HashPasswordService } from 'src/shared/services/hash-password/hash-pass
 export class ClientsService {
   constructor(
     @InjectRepository(Client)
-    private readonly clientsRepository: Repository<Client>,
+    private readonly repository: Repository<Client>,
     private readonly clientsStatisticsService: ClientsStatisticsService,
     private readonly hashPasswordService: HashPasswordService
   ) {}
 
   async getById(id: string) {
-    const client = await this.clientsRepository.findOne({
+    const client = await this.repository.findOne({
       where: { id: id },
       relations: ['statistics'],
     });
-    if (client === null) {
+    if (!client) {
       throw new NotFoundException(
         'Not found any client registered by this id.',
       );
@@ -41,11 +41,11 @@ export class ClientsService {
   }
 
   async getByIdWithAllInformation(id: string) {
-    const client = await this.clientsRepository.findOne({
+    const client = await this.repository.findOne({
       where: { id: id },
       relations: ['statistics', 'enrollments', 'customers'],
     });
-    if (client === null) {
+    if (!client) {
       throw new NotFoundException(
         'Not found any client registered by this id.',
       );
@@ -54,7 +54,7 @@ export class ClientsService {
   }
 
   async getByUsername(username: string) {
-    const client = await this.clientsRepository.findOne({
+    const client = await this.repository.findOne({
       where: { username: username },
     });
     return client;
@@ -66,19 +66,20 @@ export class ClientsService {
     Object.assign(client, createClientDTO);
     client.password = await this.hashPasswordService.hashPassword(createClientDTO.password);
     client.statistics = await this.createClientStatitcs(client.id);
-    await this.clientsRepository.save(client); 
+    await this.repository.save(client); 
     return client.id;
   }
 
   private async createClientStatitcs(clientId: string){
     const createClientStatisticsDTO = new CreateClientStatisticsDTO(clientId);
-    return await this.clientsStatisticsService.create(createClientStatisticsDTO);
+    const clientStatistics = await this.clientsStatisticsService.create(createClientStatisticsDTO);
+    return clientStatistics;
   }
 
   async update(id: string, updateClient: UpdateClientDTO) {
     const client = await this.getById(id);
     if (client) {
-      await this.clientsRepository.update(id, updateClient);
+      await this.repository.update(id, updateClient);
     }
   }
 
@@ -87,7 +88,7 @@ export class ClientsService {
     if (client) {
       const clientStatisticsId = client.statisticsId;
       await this.clientsStatisticsService.delete(clientStatisticsId);
-      await this.clientsRepository.delete(id);
+      await this.repository.delete(id);
     }
   }
 }

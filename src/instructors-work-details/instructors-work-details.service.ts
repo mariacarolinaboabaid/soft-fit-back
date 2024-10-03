@@ -12,12 +12,13 @@ import { UpdateInstructorsWorkDetailsDTO } from './dtos/update.dto';
 export class InstructorsWorkDetailsService {
   constructor(
     @InjectRepository(InstructorWorkDetails)
-    private readonly instructorWorkDetailsRepository: Repository<InstructorWorkDetails>,
+    private readonly repository: Repository<InstructorWorkDetails>,
   ) {}
 
   async getById(id: string) {
-    const instructorWorkDetails =
-      await this.instructorWorkDetailsRepository.findOne({ where: { id: id } });
+    const instructorWorkDetails = await this.repository.findOne({
+      where: { id: id },
+    });
     if (!instructorWorkDetails) {
       throw new NotFoundException(
         'Not found any work details registered by this id.',
@@ -42,7 +43,7 @@ export class InstructorsWorkDetailsService {
     instructorWorkDetails.payments = [];
     instructorWorkDetails.instructor = instructor;
     Object.assign(instructorWorkDetails, createInstructorWorkDetailsDTO);
-    await this.instructorWorkDetailsRepository.save(instructorWorkDetails);
+    await this.repository.save(instructorWorkDetails);
   }
 
   private createRegisterForSalaryHistory(salary: number, startDate: Date) {
@@ -58,13 +59,10 @@ export class InstructorsWorkDetailsService {
     id: string,
     updateInstructorsWorkDetailDTO: UpdateInstructorsWorkDetailsDTO,
   ) {
-    await this.instructorWorkDetailsRepository.update(
-      id,
-      updateInstructorsWorkDetailDTO,
-    );
+    await this.repository.update(id, updateInstructorsWorkDetailDTO);
   }
 
   async delete(id: string) {
-    await this.instructorWorkDetailsRepository.delete(id);
+    await this.repository.delete(id);
   }
 }

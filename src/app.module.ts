@@ -11,6 +11,7 @@ import { CustomersModule } from './customers/customers.module';
 import { EnrollmentsModule } from './enrollments/enrollments.module';
 import { InstructorsModule } from './instructors/instructors.module';
 import { InstructorsWorkDetailsModule } from './instructors-work-details/instructors-work-details.module';
+import { AuthenticationModule } from './authentication/authentication.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { InstructorsWorkDetailsModule } from './instructors-work-details/instruc
     EnrollmentsModule,
     InstructorsModule,
     InstructorsWorkDetailsModule,
+    AuthenticationModule,
   ],
   controllers: [AppController],
   providers: [AppService],

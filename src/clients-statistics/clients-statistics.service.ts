@@ -10,14 +10,14 @@ import { CreateClientStatisticsDTO } from './dtos/create.dto';
 export class ClientsStatisticsService {
   constructor(
     @InjectRepository(ClientStatistics)
-    private readonly clientStatisticsRepository: Repository<ClientStatistics>,
+    private readonly repository: Repository<ClientStatistics>,
   ) {}
 
   async getById(id: string) {
-    const clientStatistics = await this.clientStatisticsRepository.findOne({
+    const clientStatistics = await this.repository.findOne({
       where: { id: id },
     });
-    if (clientStatistics === null) {
+    if (!clientStatistics) {
       throw new NotFoundException(
         'Not found any statistics registered by this id.',
       );
@@ -30,21 +30,21 @@ export class ClientsStatisticsService {
     const clientStatisticsId = uuid();
     clientStatistics.id = clientStatisticsId;
     Object.assign(clientStatistics, createClientStatisticsDTO);
-    await this.clientStatisticsRepository.save(clientStatistics);
+    await this.repository.save(clientStatistics);
     return clientStatistics;
   }
 
   async update(id: string, updateClientStatistics: UpdateClientStatisticsDTO) {
     const clientStatistics = await this.getById(id);
     if (clientStatistics) {
-      await this.clientStatisticsRepository.update(id, updateClientStatistics);
+      await this.repository.update(id, updateClientStatistics);
     }
   }
 
   async delete(id: string) {
     const clientStatistics = await this.getById(id);
     if (clientStatistics) {
-      await this.clientStatisticsRepository.delete(id);
+      await this.repository.delete(id);
     }
   }
 }
