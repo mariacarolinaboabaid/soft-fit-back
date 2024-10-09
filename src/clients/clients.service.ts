@@ -30,14 +30,7 @@ export class ClientsService {
         'Not found any client registered by this id.',
       );
     }
-    const clientDTO = new ReturnClientDTO(
-      client.businessName,
-      client.fiscalNumber,
-      client.username,
-      client.currency,
-      client.statistics.id,
-    );
-    return clientDTO;
+    return client;
   }
 
   async getByIdWithAllInformation(id: string) {
@@ -86,7 +79,7 @@ export class ClientsService {
   async delete(id: string) {
     const client = await this.getById(id);
     if (client) {
-      const clientStatisticsId = client.statisticsId;
+      const clientStatisticsId = client.statistics.id;
       await this.clientsStatisticsService.delete(clientStatisticsId);
       await this.repository.delete(id);
     }

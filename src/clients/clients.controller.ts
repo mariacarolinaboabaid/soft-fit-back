@@ -6,20 +6,23 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDTO } from './dtos/create.dto';
 import { UpdateClientDTO } from './dtos/update.dto';
 import { VerifyUserTokenGuard } from 'src/authentication/guards/verify-user-token/verify-user-token.guard';
+import { UserPayload } from 'src/authentication/interfaces/user-payload.interface';
 
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @UseGuards(VerifyUserTokenGuard)
-  @Get('/:id')
-  async getById(@Param('id') id: string) {
+  @Get()
+  async getById(@Req() request: UserPayload) {
+    const id = request.sub;
     const client = await this.clientsService.getById(id);
     return client;
   }

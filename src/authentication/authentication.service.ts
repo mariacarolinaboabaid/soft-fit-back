@@ -45,11 +45,14 @@ export class AuthenticationService {
     if (!passwordIsValid) {
       throw new UnauthorizedException('Incorrect password.');
     }
+    const userDisplayName = isClient
+      ? user.businessName
+      : user.firstName + ' ' + user.lastName;
     const payload: UserPayload = {
       sub: user.id,
-      name: isClient ? user.businessName : user.firstName + user.lastName,
+      name: userDisplayName,
     };
     const token = await this.jwtService.signAsync(payload);
-    return { acessToken: token };
+    return { accessToken: token, name: userDisplayName };
   }
 }
