@@ -1,3 +1,8 @@
+import { CustomersService } from './customers.service';
+import { CreateCustomerDTO } from './dtos/create.dto';
+import { UpdateCustomerDTO } from './dtos/update.dto';
+import { VerifyUserTokenGuard } from 'src/authentication/guards/verify-user-token/verify-user-token.guard';
+import { UserPayload } from 'src/authentication/interfaces/user-payload.interface';
 import {
   Body,
   Controller,
@@ -9,11 +14,6 @@ import {
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { CustomersService } from './customers.service';
-import { CreateCustomerDTO } from './dtos/create.dto';
-import { UpdateCustomerDTO } from './dtos/update.dto';
-import { VerifyUserTokenGuard } from 'src/authentication/guards/verify-user-token/verify-user-token.guard';
-import { UserPayload } from 'src/authentication/interfaces/user-payload.interface';
 
 @UseGuards(VerifyUserTokenGuard)
 @Controller('customers')
