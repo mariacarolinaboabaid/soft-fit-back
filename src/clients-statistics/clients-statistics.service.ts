@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid';
 import { ClientStatistics } from '../clients-statistics/client-statistics.entity';
 import { UpdateClientStatisticsDTO } from './dtos/update.dto';
 import { CreateClientStatisticsDTO } from './dtos/create.dto';
+import { ReturnClientStatisticsDTO } from './dtos/return.dto';
 
 @Injectable()
 export class ClientsStatisticsService {
@@ -23,6 +24,28 @@ export class ClientsStatisticsService {
       );
     }
     return clientStatistics;
+  }
+
+  async getByClientId(clientId: string) {
+    const clientStatistics = await this.repository.findOne({
+      where: { client: { id: clientId } },
+    });
+    if (!clientStatistics) {
+      throw new NotFoundException(
+        'Not found any statistics registered by this Client id.',
+      );
+    }
+    const clientStatisticsDTO = new ReturnClientStatisticsDTO(
+      clientStatistics.totalCustomers,
+      clientStatistics.totalDeliquentCustomers,
+      clientStatistics.totalDeliquencyAmount,
+      clientStatistics.totalRenewedEnrollments,
+      clientStatistics.totalNewEnrollments,
+      clientStatistics.totalCanceledEnrollments,
+      clientStatistics.totalPremiumEnrollments,
+      clientStatistics.totalBasicEnrollments,
+    );
+    return clientStatisticsDTO;
   }
 
   async create(createClientStatisticsDTO: CreateClientStatisticsDTO) {

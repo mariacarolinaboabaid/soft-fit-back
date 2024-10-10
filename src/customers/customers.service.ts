@@ -12,6 +12,8 @@ import { CreatePaymentDTO } from '../shared/dtos/payments/create-payment.dto';
 import { Payment } from '../shared/interfaces/payments/payment.interface';
 import { ClientsService } from 'src/clients/clients.service';
 import { EnrollmentsService } from 'src/enrollments/enrollments.service';
+import { ReturnCustomerDeliquentDTO } from './dtos/return-deliquents.dto';
+import { console } from 'inspector';
 
 
 @Injectable()
@@ -130,7 +132,12 @@ export class CustomersService {
         deliquent: true,
       },
     });
-    return customers;
+    const customersDTO = customers.map(customer => {
+      const fullName = customer.firstName + ' ' + customer.lastName;
+      return new ReturnCustomerDeliquentDTO(customer.id, fullName)
+    })
+    console.log(customersDTO)
+    return customersDTO;
   }
 
   async create(createCustomerDTO: CreateCustomerDTO) {
