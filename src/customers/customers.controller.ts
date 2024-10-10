@@ -6,12 +6,14 @@ import {
   Param,
   Post,
   Put,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { CustomersService } from './customers.service';
 import { CreateCustomerDTO } from './dtos/create.dto';
 import { UpdateCustomerDTO } from './dtos/update.dto';
 import { VerifyUserTokenGuard } from 'src/authentication/guards/verify-user-token/verify-user-token.guard';
+import { UserPayload } from 'src/authentication/interfaces/user-payload.interface';
 
 @UseGuards(VerifyUserTokenGuard)
 @Controller('customers')
@@ -24,23 +26,24 @@ export class CustomersController {
     return customers;
   }
 
-  @Get('/:id')
-  async getById(@Param('id') id: string) {
-    const customer = await this.customersService.getById(id);
-    return customer;
-  }
-
   @Get('/customers-by-client-id/:clientId')
   async getAllByClientId(@Param('clientId') clientId: string) {
     const customers = await this.customersService.getAllByClientId(clientId);
     return customers;
   }
 
-  @Get('/deliquents-customers-by-client-id/:clientId')
-  async getDeliquentsCustomersByClientId(@Param('clientId') clientId: string) {
+  @Get('/deliquents-customers-by-client-id')
+  async getDeliquentsCustomersByClientId(@Req() request: UserPayload) {
+    const clientId = request.sub;
     const customers =
       await this.customersService.getDeliquentsCustomersByClientId(clientId);
     return customers;
+  }
+
+  @Get('/:id')
+  async getById(@Param('id') id: string) {
+    const customer = await this.customersService.getById(id);
+    return customer;
   }
 
   @Post()
