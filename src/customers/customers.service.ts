@@ -188,7 +188,6 @@ export class CustomersService {
 
   async updatePropertyActive(id: string){
     const customer = await this.getById(id);
-    console.log(customer)
     if (customer) {
       customer.active = !customer.active;
       if (customer.active){

@@ -8,6 +8,7 @@ import { UpdateInstructorDTO } from './dtos/update.dto';
 import { HashPasswordService } from 'src/shared/services/hash-password/hash-password.service';
 import { ClientsService } from 'src/clients/clients.service';
 import { InstructorsWorkDetailsService } from 'src/instructors-work-details/instructors-work-details.service';
+import { ReturnBestRatedInstructorsDTO } from './dtos/return-best-rated.dto';
 
 @Injectable()
 export class InstructorsService {
@@ -54,14 +55,47 @@ export class InstructorsService {
     return instructor;
   }
 
+  async getBestRatedInstructorsByClientId(clientId: string) {
+    const instructors = await this.repository.find({
+      where: { client: { id: clientId } },
+      relations: ['client', 'workDetails'],
+    });
+    const sortedInstructors = instructors
+      .sort((a, b) => {
+        return b.workDetails.ratingValue - a.workDetails.ratingValue;
+      })
+      .slice(0, 5);
+    const sortedInstructorsDTO = sortedInstructors.map((instructor) => {
+      const fullName = instructor.firstName + ' ' + instructor.lastName;
+      return new ReturnBestRatedInstructorsDTO(
+        instructor.id,
+        fullName,
+        instructor.workDetails.ratingValue,
+        instructor.workDetails.ratingVotesQuantity,
+      );
+    });
+    return sortedInstructorsDTO;
+  }
+
+  async getCountTotalInstructorsByClientId(clientId: string) {
+    const count = await this.repository.count({
+      where: { client: { id: clientId } },
+    });
+    return count;
+  }
+
   async create(createInstructorDTO: CreateInstructorDTO) {
     const { createWorkDetailsDTO, ...onlyInstructorDTO } = createInstructorDTO;
+    const clientInformation = await this.getClientInformation(
+      onlyInstructorDTO.clientId,
+    );
     const instructor = new Instructor();
     Object.assign(instructor, onlyInstructorDTO);
     instructor.id = uuid();
     instructor.active = true;
-    instructor.client = await this.getClientInformation(
-      onlyInstructorDTO.clientId,
+    instructor.client = clientInformation;
+    instructor.enrollmentNumber = await this.generateEnrollmentNumber(
+      clientInformation.id,
     );
     instructor.password = await this.hashPasswordService.hashPassword(
       onlyInstructorDTO.password,
@@ -70,12 +104,20 @@ export class InstructorsService {
     await this.instructorsWorkDetailsService.create(
       createWorkDetailsDTO,
       instructor,
+      clientInformation.currency,
     );
     return instructor.id;
   }
 
   private async getClientInformation(clientId: string) {
     return await this.clientsService.getByIdWithAllInformation(clientId);
+  }
+
+  private async generateEnrollmentNumber(clientId: string) {
+    const totalInstructorsClient =
+      await this.getCountTotalInstructorsByClientId(clientId);
+    const enrollmentNumber = totalInstructorsClient + 1;
+    return enrollmentNumber.toString();
   }
 
   async update(id: string, updateInstructorDTO: UpdateInstructorDTO) {
@@ -88,6 +130,20 @@ export class InstructorsService {
         workDetailsId,
         updateWorkDetailsDTO,
       );
+    }
+  }
+
+  async updatePropertyActive(id: string) {
+    const instructor = await this.getById(id);
+    if (instructor) {
+      instructor.active = !instructor.active;
+      if (instructor.active) {
+        instructor.inactiveDate = null;
+      } else {
+        const today = new Date();
+        instructor.inactiveDate = today;
+      }
+      await this.repository.update(id, instructor);
     }
   }
 

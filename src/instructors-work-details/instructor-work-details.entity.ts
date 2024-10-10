@@ -1,3 +1,4 @@
+import { Currency } from '../shared/enums/currency/currency.enum';
 import { Instructor } from '../instructors/instructor.entity';
 import { Payment } from '../shared/interfaces/payments/payment.interface';
 import { SalaryHistory } from './interfaces/salary-history.interface';
@@ -21,11 +22,20 @@ export class InstructorWorkDetails {
   @JoinColumn({ name: 'instructor_id' })
   instructor: Instructor;
 
+  @Column({ name: 'rating_value', type: 'float' })
+  ratingValue: number;
+
+  @Column({ name: 'rating_votes_quantity', type: 'int' })
+  ratingVotesQuantity: number;
+
   @Column({ name: 'hire_date', type: 'date' })
   hireDate: Date;
 
   @Column({ name: 'salary', type: 'float' })
   salary: number;
+
+  @Column({ name: 'currency', enum: Currency, nullable: false })
+  currency: Currency;
 
   @Column({ name: 'due_date', type: 'date' })
   dueDate: Date;

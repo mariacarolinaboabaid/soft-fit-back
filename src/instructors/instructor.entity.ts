@@ -3,7 +3,6 @@ import { InstructorWorkDetails } from '../instructors-work-details/instructor-wo
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -44,6 +43,9 @@ export class Instructor {
   @Column({ name: 'phone', type: 'varchar', unique: true })
   phone: string;
 
+  @Column({ name: 'enrollment_number', type: 'varchar', unique: true })
+  enrollmentNumber: string;
+
   @OneToOne(
     () => InstructorWorkDetails,
     (workDetails) => workDetails.instructor,
@@ -53,9 +55,9 @@ export class Instructor {
   @Column({ name: 'active', type: 'boolean' })
   active: boolean;
 
+  @Column({ name: 'set_inactive_on_date', type: 'date', nullable: true })
+  inactiveDate: Date;
+
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
-
-  @DeleteDateColumn({ name: 'deleted_at' })
-  deletedAt: Date;
 }
