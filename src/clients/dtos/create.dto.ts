@@ -1,5 +1,5 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsString } from 'class-validator';
-import { Currency } from '../enums/currency.enum';
+import { Currency } from '../../shared/enums/currency/currency.enum';
 import { IsUsernameUnique } from 'src/shared/validators/is-username-unique/is-username-unique';
 
 export class CreateClientDTO {

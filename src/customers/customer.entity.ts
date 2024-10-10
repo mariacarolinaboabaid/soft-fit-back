@@ -1,10 +1,10 @@
+import { Currency } from '../shared/enums/currency/currency.enum';
 import { Client } from '../clients/client.entity';
 import { Enrollment } from '../enrollments/enrollment.entity';
 import { Payment } from '../shared/interfaces/payments/payment.interface';
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
@@ -50,6 +50,12 @@ export class Customer {
   @JoinColumn({ name: 'enrollment_id' })
   enrollment: Enrollment;
 
+  @Column({ name: 'enrollment_number', type: 'varchar', unique: true })
+  enrollmentNumber: string;
+
+  @Column({ name: 'currency', enum: Currency, nullable: false })
+  currency: Currency;
+
   @Column({ name: 'card_number', type: 'varchar', unique: true })
   cardNumber: string;
 
@@ -74,12 +80,12 @@ export class Customer {
   @Column({ name: 'active', type: 'boolean' })
   active: boolean;
 
+  @Column({ name: 'set_inactive_on_date', type: 'date', nullable: true })
+  inactiveDate: Date;
+
   @Column({ name: 'deliquent', type: 'boolean' })
   deliquent: boolean;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
-
-  @DeleteDateColumn({ name: 'deleted_at' })
-  deletedAt: Date;
 }

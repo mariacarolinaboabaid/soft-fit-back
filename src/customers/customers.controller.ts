@@ -55,6 +55,14 @@ export class CustomersController {
     };
   }
 
+  @Put('update-active-status/:id')
+  async updatePropertyActive(@Param('id') id: string) {
+    await this.customersService.updatePropertyActive(id);
+    return {
+      message: 'Customer successfully updated.',
+    };
+  }
+
   @Put('/:id')
   async update(
     @Param('id') id: string,
