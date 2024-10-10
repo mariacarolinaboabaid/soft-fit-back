@@ -141,14 +141,17 @@ export class CustomersService {
   }
 
   async create(createCustomerDTO: CreateCustomerDTO) {
+    const clientInformation = await this.getClientInformation(createCustomerDTO.clientId);
     const customer = new Customer();
     Object.assign(customer, createCustomerDTO);
     customer.id = uuid();
     customer.active = true;
     customer.deliquent = false;
     customer.payments = [];
-    customer.client = await this.getClientInformation(createCustomerDTO.clientId);
+    customer.client = clientInformation;
+    customer.currency = clientInformation.currency;
     customer.enrollment = await this.enrollmentsService.getById(createCustomerDTO.enrollmentId);
+    customer.enrollmentNumber = await this.generateEnrollmentNumber(clientInformation.id);
     customer.password = await this.hashPasswordService.hashPassword(createCustomerDTO.password,);
     await this.repository.save(customer);
     return customer.id;
@@ -157,6 +160,12 @@ export class CustomersService {
   private async getClientInformation(clientId: string) {
     return await this.clientsService.getByIdWithAllInformation(clientId);
   }
+
+  private async generateEnrollmentNumber(clientId: string){
+    const totalCustomersClient = await this.getCountTotalCustomersByClientId(clientId);
+    const enrollmentNumber = totalCustomersClient + 1;
+    return enrollmentNumber.toString();
+  } 
 
   async createPayment(id: string, createPaymentDTO: CreatePaymentDTO) {
     const customer = await this.getById(id);
@@ -174,6 +183,21 @@ export class CustomersService {
     const customer = await this.getById(id);
     if (customer) {
       await this.repository.update(id, updateCustomerDTO);
+    }
+  }
+
+  async updatePropertyActive(id: string){
+    const customer = await this.getById(id);
+    console.log(customer)
+    if (customer) {
+      customer.active = !customer.active;
+      if (customer.active){
+        customer.inactiveDate = null;
+      } else {
+        const today = new Date();
+        customer.inactiveDate = today;
+      }
+      await this.repository.update(id, customer);
     }
   }
 

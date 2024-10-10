@@ -1,4 +1,4 @@
-import { Currency } from '../enums/currency.enum';
+import { Currency } from '../../shared/enums/currency/currency.enum';
 
 export class ReturnClientDTO {
   constructor(
@@ -7,5 +7,5 @@ export class ReturnClientDTO {
     readonly username: string,
     readonly currency: Currency,
     readonly statisticsId: string,
-  ) {}
+  ) { }
 }

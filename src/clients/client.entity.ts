@@ -6,7 +6,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Currency } from './enums/currency.enum';
+import { Currency } from '../shared/enums/currency/currency.enum';
 import { ClientStatistics } from '../clients-statistics/client-statistics.entity';
 import { Enrollment } from '../enrollments/enrollment.entity';
 import { Customer } from '../customers/customer.entity';
